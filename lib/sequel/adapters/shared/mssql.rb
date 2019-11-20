@@ -476,6 +476,21 @@ module Sequel
         @mssql_unicode_strings = typecast_value_boolean(@opts.fetch(:mssql_unicode_strings, true))
       end
       
+
+      # Specify unicode strings by default for Strings.
+      # If a size isn't present, Sequel assumes a size of 255.
+      # If the :fixed option is used, Sequel uses the char type.
+      # If the :text option is used, Sequel uses the :text type.
+      def type_literal_generic_string(column)
+        if column[:text]
+          :ntext
+        elsif column[:fixed]
+          "nchar(#{column[:size]||default_string_column_size})"
+        else
+          "nvarchar(#{column[:size]||default_string_column_size})"
+        end
+      end
+
       # MSSQL has both datetime and timestamp classes, most people are going
       # to want datetime
       def type_literal_generic_datetime(column)
