@@ -478,12 +478,12 @@ module Sequel
       
 
       # Specify unicode strings by default for Strings.
-      # If a size isn't present, Sequel assumes a size of 255.
-      # If the :fixed option is used, Sequel uses the char type.
-      # If the :text option is used, Sequel uses the :text type.
+      # If a size isn't present, assumes a size of 255.
+      # If the :fixed option is used, uses the nchar type.
+      # If the :text option is used, MSSQL prefers nvarchar(max) as text and ntext are depricated.
       def type_literal_generic_string(column)
         if column[:text]
-          :ntext
+          "nvarchar(max)"
         elsif column[:fixed]
           "nchar(#{column[:size]||default_string_column_size})"
         else
